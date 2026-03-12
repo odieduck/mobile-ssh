@@ -1,0 +1,56 @@
+name: MobileSSH
+options:
+  bundleIdPrefix: com.mobilessh
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "15"
+  createIntermediateGroups: true
+
+packages:
+  SwiftNIOSSH:
+    url: https://github.com/apple/swift-nio-ssh
+    from: "0.7.0"
+  SwiftTerm:
+    url: https://github.com/migueldeicaza/SwiftTerm
+    from: "1.2.0"
+
+targets:
+  MobileSSH:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: MobileSSH
+    resources:
+      - path: MobileSSH/Resources/Assets.xcassets
+    dependencies:
+      - package: SwiftNIOSSH
+        product: NIOSSH
+      - package: SwiftTerm
+        product: SwiftTerm
+    info:
+      path: MobileSSH/Info.plist
+      properties:
+        UILaunchStoryboardName: ""
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations: {}
+        NSLocalNetworkUsageDescription: "MobileSSH needs local network access to connect to SSH servers on your local network."
+        CFBundleName: MobileSSH
+        CFBundleDisplayName: MobileSSH
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mobilessh.app
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"

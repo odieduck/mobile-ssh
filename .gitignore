@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Xcode user data
+*.xcuserstate
+xcuserdata/
+*.xcuserdatad/
+
+# Build products
+build/
+DerivedData/
+
+# Debug screenshots
+bad*.png
+
+# SPM resolved (let Xcode manage)
+# MobileSSH.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved

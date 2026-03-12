@@ -1,0 +1,460 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		001968F3B8131A213C94F3BE /* TerminalContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD35A11625CA010625950C2 /* TerminalContainerView.swift */; };
+		3987AEA356B1DBBA0F7F21F8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5484F338275F8B5A9A4DE5 /* SettingsView.swift */; };
+		51B8927DB4168B05B64E5D26 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD7475F33C12EA8A48ECF69 /* KeychainStore.swift */; };
+		66A96116EDD0CEDF2BE17749 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = 55A3CEC5B44726F54004ABC9 /* SwiftTerm */; };
+		6AFCEF5E5DD18D2EF32A895B /* HostListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7193A7DEEE30ADB1ED963DD0 /* HostListView.swift */; };
+		7EA301A2FC76B275951B8392 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB784E9686DD2331AD491CE7 /* Assets.xcassets */; };
+		8BCA1CF53FAF5D74215F59AC /* KeyboardToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B897331136E695943084FB /* KeyboardToolbar.swift */; };
+		986325C13B4F39971FB5ED54 /* SSHHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D2A6F5427DE49E8DE4A6011 /* SSHHost.swift */; };
+		9FC39EA34C667A3E46E3F447 /* MobileSSHApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8222A69DE2AB9DFD87EF5029 /* MobileSSHApp.swift */; };
+		A33108C036B599B747C235DE /* TerminalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C03B9D5B341618E2CB180F /* TerminalViewController.swift */; };
+		F1A2B3C4D5E6F7A8B9C0D1E2 /* SSHTerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D1C0B9A8F7E6D5C4B3A2F1 /* SSHTerminalView.swift */; };
+		A42E45628E802333EEA01E7E /* SSHConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB27ABA31C90B9E51FBE0E /* SSHConnection.swift */; };
+		A77906B10ED9FC90E1222A8A /* SSHAuthMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC80DB27981E7E91B5EF5E4 /* SSHAuthMethod.swift */; };
+		BA1BA0EDD12F0DBB0CA1F4D4 /* AddHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0178EB82AE9B3E828ECABC88 /* AddHostView.swift */; };
+		BD5F3CB179190C7E5C9F0D3E /* SSHTerminalChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890ABE84CB74A42CB8DF276E /* SSHTerminalChannel.swift */; };
+		DF481780FF9B4E8889460048 /* NIOSSH in Frameworks */ = {isa = PBXBuildFile; productRef = 012434A14E8321C37740B98C /* NIOSSH */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0178EB82AE9B3E828ECABC88 /* AddHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHostView.swift; sourceTree = "<group>"; };
+		0D2A6F5427DE49E8DE4A6011 /* SSHHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHHost.swift; sourceTree = "<group>"; };
+		21C03B9D5B341618E2CB180F /* TerminalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalViewController.swift; sourceTree = "<group>"; };
+		2DD7475F33C12EA8A48ECF69 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		2FC80DB27981E7E91B5EF5E4 /* SSHAuthMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHAuthMethod.swift; sourceTree = "<group>"; };
+		7193A7DEEE30ADB1ED963DD0 /* HostListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostListView.swift; sourceTree = "<group>"; };
+		7CEB27ABA31C90B9E51FBE0E /* SSHConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHConnection.swift; sourceTree = "<group>"; };
+		8222A69DE2AB9DFD87EF5029 /* MobileSSHApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileSSHApp.swift; sourceTree = "<group>"; };
+		85B897331136E695943084FB /* KeyboardToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardToolbar.swift; sourceTree = "<group>"; };
+		E2D1C0B9A8F7E6D5C4B3A2F1 /* SSHTerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHTerminalView.swift; sourceTree = "<group>"; };
+		890ABE84CB74A42CB8DF276E /* SSHTerminalChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHTerminalChannel.swift; sourceTree = "<group>"; };
+		9A5484F338275F8B5A9A4DE5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AAD35A11625CA010625950C2 /* TerminalContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalContainerView.swift; sourceTree = "<group>"; };
+		B9A2F15BC2DB8D1337FB7016 /* MobileSSH.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileSSH.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB784E9686DD2331AD491CE7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E26BBC46C5ECE6D6BA9F42EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2D14CA54E64AF5B270B2BC36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF481780FF9B4E8889460048 /* NIOSSH in Frameworks */,
+				66A96116EDD0CEDF2BE17749 /* SwiftTerm in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1B7FA7FA6B90BF29F679D51A /* Terminal */ = {
+			isa = PBXGroup;
+			children = (
+				85B897331136E695943084FB /* KeyboardToolbar.swift */,
+				E2D1C0B9A8F7E6D5C4B3A2F1 /* SSHTerminalView.swift */,
+				21C03B9D5B341618E2CB180F /* TerminalViewController.swift */,
+			);
+			path = Terminal;
+			sourceTree = "<group>";
+		};
+		1B873666FA601D7FE9B0BBDE /* SSH */ = {
+			isa = PBXGroup;
+			children = (
+				2FC80DB27981E7E91B5EF5E4 /* SSHAuthMethod.swift */,
+				7CEB27ABA31C90B9E51FBE0E /* SSHConnection.swift */,
+				890ABE84CB74A42CB8DF276E /* SSHTerminalChannel.swift */,
+			);
+			path = SSH;
+			sourceTree = "<group>";
+		};
+		2835F5592E877535A0CB4AF9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CB784E9686DD2331AD491CE7 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		3107655B22B7538C853BBFE9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0178EB82AE9B3E828ECABC88 /* AddHostView.swift */,
+				7193A7DEEE30ADB1ED963DD0 /* HostListView.swift */,
+				9A5484F338275F8B5A9A4DE5 /* SettingsView.swift */,
+				AAD35A11625CA010625950C2 /* TerminalContainerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		39B61047FECB99999DE550A0 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				8222A69DE2AB9DFD87EF5029 /* MobileSSHApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		48423F90F322AE4A0DB6ACEF /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0D2A6F5427DE49E8DE4A6011 /* SSHHost.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4DF66BBF36817BBF9CF00063 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B9A2F15BC2DB8D1337FB7016 /* MobileSSH.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8E5DF2533447CDC0D410BBEB = {
+			isa = PBXGroup;
+			children = (
+				F9A2FB55F438FE5FBD2D33F6 /* MobileSSH */,
+				4DF66BBF36817BBF9CF00063 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A5EEE4F43F73223380858BD6 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				2DD7475F33C12EA8A48ECF69 /* KeychainStore.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		F9A2FB55F438FE5FBD2D33F6 /* MobileSSH */ = {
+			isa = PBXGroup;
+			children = (
+				E26BBC46C5ECE6D6BA9F42EF /* Info.plist */,
+				39B61047FECB99999DE550A0 /* App */,
+				48423F90F322AE4A0DB6ACEF /* Models */,
+				2835F5592E877535A0CB4AF9 /* Resources */,
+				1B873666FA601D7FE9B0BBDE /* SSH */,
+				A5EEE4F43F73223380858BD6 /* Storage */,
+				1B7FA7FA6B90BF29F679D51A /* Terminal */,
+				3107655B22B7538C853BBFE9 /* Views */,
+			);
+			path = MobileSSH;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2E1343329707CE7EB26A336A /* MobileSSH */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2C38EB29BFC1051C40C08153 /* Build configuration list for PBXNativeTarget "MobileSSH" */;
+			buildPhases = (
+				40C9AB55F331A635C2D5E084 /* Sources */,
+				B909AAE43BA253D65AAE6236 /* Resources */,
+				2D14CA54E64AF5B270B2BC36 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MobileSSH;
+			packageProductDependencies = (
+				012434A14E8321C37740B98C /* NIOSSH */,
+				55A3CEC5B44726F54004ABC9 /* SwiftTerm */,
+			);
+			productName = MobileSSH;
+			productReference = B9A2F15BC2DB8D1337FB7016 /* MobileSSH.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CF7B33ED16B4375F728ACC8F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					2E1343329707CE7EB26A336A = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A90832F34396EE805C86738A /* Build configuration list for PBXProject "MobileSSH" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8E5DF2533447CDC0D410BBEB;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B2548B3843B9FE9E5F99256B /* XCRemoteSwiftPackageReference "swift-nio-ssh" */,
+				FB687CCAAE608455E7B0E03D /* XCLocalSwiftPackageReference "SwiftTerm" */,
+			);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2E1343329707CE7EB26A336A /* MobileSSH */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B909AAE43BA253D65AAE6236 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7EA301A2FC76B275951B8392 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		40C9AB55F331A635C2D5E084 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BA1BA0EDD12F0DBB0CA1F4D4 /* AddHostView.swift in Sources */,
+				6AFCEF5E5DD18D2EF32A895B /* HostListView.swift in Sources */,
+				8BCA1CF53FAF5D74215F59AC /* KeyboardToolbar.swift in Sources */,
+				51B8927DB4168B05B64E5D26 /* KeychainStore.swift in Sources */,
+				9FC39EA34C667A3E46E3F447 /* MobileSSHApp.swift in Sources */,
+				A77906B10ED9FC90E1222A8A /* SSHAuthMethod.swift in Sources */,
+				A42E45628E802333EEA01E7E /* SSHConnection.swift in Sources */,
+				986325C13B4F39971FB5ED54 /* SSHHost.swift in Sources */,
+				BD5F3CB179190C7E5C9F0D3E /* SSHTerminalChannel.swift in Sources */,
+				3987AEA356B1DBBA0F7F21F8 /* SettingsView.swift in Sources */,
+				001968F3B8131A213C94F3BE /* TerminalContainerView.swift in Sources */,
+				A33108C036B599B747C235DE /* TerminalViewController.swift in Sources */,
+				F1A2B3C4D5E6F7A8B9C0D1E2 /* SSHTerminalView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0113A935AB2D77FB66FBA42D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6503E13614D0CB352A067D36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B2E9621876F4BDF2068CFE67 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5DP8Q774P4;
+				INFOPLIST_FILE = MobileSSH/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mobilessh.app;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BB64A85E777830B9FCCB51AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5DP8Q774P4;
+				INFOPLIST_FILE = MobileSSH/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mobilessh.app;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2C38EB29BFC1051C40C08153 /* Build configuration list for PBXNativeTarget "MobileSSH" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B2E9621876F4BDF2068CFE67 /* Debug */,
+				BB64A85E777830B9FCCB51AC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A90832F34396EE805C86738A /* Build configuration list for PBXProject "MobileSSH" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6503E13614D0CB352A067D36 /* Debug */,
+				0113A935AB2D77FB66FBA42D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B2548B3843B9FE9E5F99256B /* XCRemoteSwiftPackageReference "swift-nio-ssh" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio-ssh";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.7.0;
+			};
+		};
+		FB687CCAAE608455E7B0E03D /* XCLocalSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = LocalPackages/SwiftTerm;
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		012434A14E8321C37740B98C /* NIOSSH */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B2548B3843B9FE9E5F99256B /* XCRemoteSwiftPackageReference "swift-nio-ssh" */;
+			productName = NIOSSH;
+		};
+		55A3CEC5B44726F54004ABC9 /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB687CCAAE608455E7B0E03D /* XCLocalSwiftPackageReference "SwiftTerm" */;
+			productName = SwiftTerm;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = CF7B33ED16B4375F728ACC8F /* Project object */;
+}
