@@ -2,18 +2,25 @@ import SwiftUI
 import UIKit
 
 struct TerminalContainerView: UIViewControllerRepresentable {
+    let hostTitle: String
     let sshTerminalChannel: SSHTerminalChannel
+    let sshConnection: SSHConnection
+    let uploadPath: String
+    let defaultDirectory: String?
     var onConnectionClosed: (() -> Void)?
 
     func makeUIViewController(context: Context) -> TerminalViewController {
-        let vc = TerminalViewController()
-        return vc
+        TerminalViewController()
     }
 
     func updateUIViewController(_ uiViewController: TerminalViewController, context: Context) {
-        // Start session if not already started
+        uiViewController.hostTitle = hostTitle
+        uiViewController.sshConnection = sshConnection
+        uiViewController.uploadPath = uploadPath
+        uiViewController.defaultDirectory = defaultDirectory
         if uiViewController.sshTerminalChannel == nil {
             uiViewController.onConnectionClosed = onConnectionClosed
+            uiViewController.onDisconnect = onConnectionClosed
             uiViewController.startSession(sshTerminalChannel)
         }
     }
@@ -43,27 +50,18 @@ struct DebugTerminalContainerView: UIViewControllerRepresentable {
 struct TerminalPresentationView: View {
     let host: SSHHost
     let sshTerminalChannel: SSHTerminalChannel
+    let sshConnection: SSHConnection
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         TerminalContainerView(
+            hostTitle: host.name.isEmpty ? host.hostname : host.name,
             sshTerminalChannel: sshTerminalChannel,
-            onConnectionClosed: {
-                dismiss()
-            }
+            sshConnection: sshConnection,
+            uploadPath: host.effectiveUploadPath,
+            defaultDirectory: host.defaultDirectory,
+            onConnectionClosed: { dismiss() }
         )
-        .navigationTitle(host.name.isEmpty ? host.hostname : host.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Disconnect") {
-                    Task {
-                        await sshTerminalChannel.close()
-                        dismiss()
-                    }
-                }
-                .foregroundColor(.red)
-            }
-        }
+        .toolbar(.hidden, for: .navigationBar)
     }
 }

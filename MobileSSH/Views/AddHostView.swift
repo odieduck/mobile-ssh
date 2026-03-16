@@ -22,6 +22,8 @@ struct AddHostView: View {
     @State private var selectedJumpHostId: UUID? = nil
     @State private var notes: String = ""
     @State private var isFavorite: Bool = false
+    @State private var uploadPath: String = "uploads"
+    @State private var defaultDirectory: String = ""
 
     // UI state
     @State private var showingTestResult = false
@@ -184,6 +186,26 @@ struct AddHostView: View {
                 Section("Options") {
                     Toggle("Favorite", isOn: $isFavorite)
 
+                    LabeledContent("Default Directory") {
+                        TextField("~/projects", text: $defaultDirectory)
+                            .multilineTextAlignment(.trailing)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                    }
+                    Text("Automatically cd into this directory after connecting.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    LabeledContent("Upload Path") {
+                        TextField("uploads", text: $uploadPath)
+                            .multilineTextAlignment(.trailing)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                    }
+                    Text("Remote directory for file uploads. Relative to home directory, or use an absolute path (e.g. /tmp/uploads).")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Notes")
                             .font(.subheadline)
@@ -253,6 +275,8 @@ struct AddHostView: View {
         selectedJumpHostId = host.jumpHostId
         notes = host.notes
         isFavorite = host.isFavorite
+        uploadPath = host.effectiveUploadPath
+        defaultDirectory = host.defaultDirectory ?? ""
 
         // Load from Keychain
         if authType == .password {
@@ -283,6 +307,8 @@ struct AddHostView: View {
         host.jumpHostId = selectedJumpHostId
         host.notes = notes
         host.isFavorite = isFavorite
+        host.uploadPath = uploadPath.isEmpty ? nil : uploadPath
+        host.defaultDirectory = defaultDirectory.isEmpty ? nil : defaultDirectory
 
         // Save credentials to Keychain
         do {

@@ -171,27 +171,72 @@ final class SSHConnection: ObservableObject {
             }
         }
 
-        // Create a session channel
+        // Create a session channel — must dispatch to the NIO event loop because
+        // NIOSSHHandler.createChannel mutates handler state and accesses the pipeline.
         let termHandler = SSHTerminalChannelHandler(cols: cols, rows: rows)
         let sessionChannel: Channel = try await withCheckedThrowingContinuation { cont in
-            let promise = channel.eventLoop.makePromise(of: Channel.self)
-            promise.futureResult.whenComplete { result in
-                switch result {
-                case .success(let ch):
-                    cont.resume(returning: ch)
-                case .failure(let err):
-                    cont.resume(throwing: err)
+            channel.eventLoop.execute {
+                let promise = channel.eventLoop.makePromise(of: Channel.self)
+                promise.futureResult.whenComplete { result in
+                    switch result {
+                    case .success(let ch):
+                        cont.resume(returning: ch)
+                    case .failure(let err):
+                        cont.resume(throwing: err)
+                    }
                 }
-            }
-            sshHandler.createChannel(promise) { childChannel, channelType in
-                guard channelType == .session else {
-                    return childChannel.eventLoop.makeFailedFuture(SSHConnectionError.channelCreationFailed)
+                sshHandler.createChannel(promise) { childChannel, channelType in
+                    guard channelType == .session else {
+                        return childChannel.eventLoop.makeFailedFuture(SSHConnectionError.channelCreationFailed)
+                    }
+                    return childChannel.pipeline.addHandler(termHandler)
                 }
-                return childChannel.pipeline.addHandler(termHandler)
             }
         }
 
         return SSHTerminalChannel(channel: sessionChannel, handler: termHandler)
+    }
+
+    func openSFTP() async throws -> SFTPClient {
+        guard let channel = channel else {
+            throw SSHConnectionError.notConnected
+        }
+
+        let sshHandler: NIOSSHHandler = try await withCheckedThrowingContinuation { cont in
+            channel.pipeline.handler(type: NIOSSHHandler.self).whenComplete { result in
+                switch result {
+                case .success(let handler):
+                    cont.resume(returning: handler)
+                case .failure:
+                    cont.resume(throwing: SSHConnectionError.handlerNotFound)
+                }
+            }
+        }
+
+        let sftpHandler = SFTPChannelHandler()
+        let sessionChannel: Channel = try await withCheckedThrowingContinuation { cont in
+            channel.eventLoop.execute {
+                let promise = channel.eventLoop.makePromise(of: Channel.self)
+                promise.futureResult.whenComplete { result in
+                    switch result {
+                    case .success(let ch):
+                        cont.resume(returning: ch)
+                    case .failure(let err):
+                        cont.resume(throwing: err)
+                    }
+                }
+                sshHandler.createChannel(promise) { childChannel, channelType in
+                    guard channelType == .session else {
+                        return childChannel.eventLoop.makeFailedFuture(SSHConnectionError.channelCreationFailed)
+                    }
+                    return childChannel.pipeline.addHandler(sftpHandler)
+                }
+            }
+        }
+
+        let client = SFTPClient(channel: sessionChannel, handler: sftpHandler)
+        try await client.waitForReady()
+        return client
     }
 
     func disconnect() async {

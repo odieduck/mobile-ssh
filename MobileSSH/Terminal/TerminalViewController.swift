@@ -1,17 +1,33 @@
 import UIKit
 import SwiftTerm
 import Combine
+import PhotosUI
+import UniformTypeIdentifiers
 
 final class TerminalViewController: UIViewController {
 
     // MARK: - Properties
 
     var sshTerminalChannel: SSHTerminalChannel?
+    var sshConnection: SSHConnection?
+    var uploadPath: String = "uploads"
+    var defaultDirectory: String?
     var onConnectionClosed: (() -> Void)?
+    /// Called immediately when the user taps Disconnect (before channel close completes).
+    var onDisconnect: (() -> Void)?
+
+    var hostTitle: String = "Terminal" {
+        didSet { headerTitleLabel?.text = hostTitle }
+    }
 
     private var terminalView: SSHTerminalView!
     private var keyboardProxy: TerminalKeyboardProxy!
     private var keyboardToolbar: KeyboardToolbar!
+    private var tmuxPanel: TmuxPanelInputView?
+    private var headerBar: UIView!
+    private var headerTitleLabel: UILabel!
+    private var uploadProgressView: UIProgressView?
+    private var uploadStatusLabel: UILabel?
     private var statusLabel: UILabel!
     private var statusOverlay: UIView!
     private var scrollToBottomButton: UIButton!
@@ -38,9 +54,14 @@ final class TerminalViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .black
+        overrideUserInterfaceStyle = .dark
+        setupHeaderBar()
         setupTerminalView()
         setupStatusOverlay()
     }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -70,17 +91,106 @@ final class TerminalViewController: UIViewController {
 
     // MARK: - Setup
 
-    private func setupTerminalView() {
-        view.backgroundColor = .black
+    private func setupHeaderBar() {
+        headerBar = UIView()
+        // True Black — extends from screen top behind Dynamic Island / status bar
+        headerBar.backgroundColor = .black
+        headerBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(headerBar)
 
-        keyboardToolbar = KeyboardToolbar(frame: CGRect(x: 0, y: 0, width: 0, height: 50))
+        let sep = UIView()
+        sep.backgroundColor = UIColor(white: 0.2, alpha: 1)
+        sep.translatesAutoresizingMaskIntoConstraints = false
+        headerBar.addSubview(sep)
+
+        headerTitleLabel = UILabel()
+        headerTitleLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        headerTitleLabel.textColor = .white
+        headerTitleLabel.text = hostTitle
+        headerTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        headerBar.addSubview(headerTitleLabel)
+
+        let uploadButton = UIButton(type: .system)
+        uploadButton.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        uploadButton.tintColor = .systemBlue
+        uploadButton.translatesAutoresizingMaskIntoConstraints = false
+        uploadButton.addTarget(self, action: #selector(uploadTapped), for: .touchUpInside)
+        headerBar.addSubview(uploadButton)
+
+        let disconnectButton = UIButton(type: .system)
+        disconnectButton.setTitle("Disconnect", for: .normal)
+        disconnectButton.setTitleColor(.systemRed, for: .normal)
+        disconnectButton.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        disconnectButton.translatesAutoresizingMaskIntoConstraints = false
+        disconnectButton.addTarget(self, action: #selector(disconnectTapped), for: .touchUpInside)
+        headerBar.addSubview(disconnectButton)
+
+        // Upload progress bar (hidden by default)
+        let progress = UIProgressView(progressViewStyle: .bar)
+        progress.trackTintColor = UIColor(white: 0.2, alpha: 1)
+        progress.progressTintColor = .systemBlue
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.isHidden = true
+        headerBar.addSubview(progress)
+        uploadProgressView = progress
+
+        let uploadLbl = UILabel()
+        uploadLbl.font = UIFont.systemFont(ofSize: 10, weight: .medium)
+        uploadLbl.textColor = .secondaryLabel
+        uploadLbl.translatesAutoresizingMaskIntoConstraints = false
+        uploadLbl.isHidden = true
+        headerBar.addSubview(uploadLbl)
+        uploadStatusLabel = uploadLbl
+
+        NSLayoutConstraint.activate([
+            // Extend to screen top so background fills behind Dynamic Island / status bar
+            headerBar.topAnchor.constraint(equalTo: view.topAnchor),
+            headerBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            headerBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            // 36pt content area starts below the safe area (Dynamic Island / status bar)
+            headerBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 36),
+
+            // Pin content to the center of the 36pt content area below the safe area
+            headerTitleLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18),
+            headerTitleLabel.centerXAnchor.constraint(equalTo: headerBar.centerXAnchor),
+
+            uploadButton.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18),
+            uploadButton.leadingAnchor.constraint(equalTo: headerBar.leadingAnchor, constant: 12),
+
+            disconnectButton.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18),
+            disconnectButton.trailingAnchor.constraint(equalTo: headerBar.trailingAnchor, constant: -12),
+
+            progress.bottomAnchor.constraint(equalTo: headerBar.bottomAnchor),
+            progress.leadingAnchor.constraint(equalTo: headerBar.leadingAnchor),
+            progress.trailingAnchor.constraint(equalTo: headerBar.trailingAnchor),
+            progress.heightAnchor.constraint(equalToConstant: 2),
+
+            uploadLbl.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18),
+            uploadLbl.leadingAnchor.constraint(equalTo: uploadButton.trailingAnchor, constant: 6),
+
+            sep.bottomAnchor.constraint(equalTo: headerBar.bottomAnchor),
+            sep.leadingAnchor.constraint(equalTo: headerBar.leadingAnchor),
+            sep.trailingAnchor.constraint(equalTo: headerBar.trailingAnchor),
+            sep.heightAnchor.constraint(equalToConstant: 0.5),
+        ])
+    }
+
+    @objc private func disconnectTapped() {
+        Task { try? await sshTerminalChannel?.close() }
+        onDisconnect?()
+    }
+
+    private func setupTerminalView() {
+
+        keyboardToolbar = KeyboardToolbar()
         keyboardToolbar.onKeyPressed = { [weak self] sequence in
             self?.sendString(sequence)
         }
-        // Let the toolbar query DECCKM state at tap time so arrow keys send the
-        // correct SS3 (application cursor) vs CSI (normal) escape sequences.
         keyboardToolbar.applicationCursorKeys = { [weak self] in
             self?.terminalView.getTerminal().applicationCursor ?? false
+        }
+        keyboardToolbar.onTmuxPanelToggle = { [weak self] _ in
+            self?.showTmuxPanel()
         }
 
         keyboardProxy = TerminalKeyboardProxy()
@@ -123,9 +233,10 @@ final class TerminalViewController: UIViewController {
         view.addSubview(keyboardProxy)
 
         NSLayoutConstraint.activate([
-            terminalView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            terminalView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            terminalView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            terminalView.topAnchor.constraint(equalTo: headerBar.bottomAnchor),
+            // 10pt horizontal insets — keeps text clear of rounded corners
+            terminalView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            terminalView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             terminalView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
         ])
 
@@ -263,6 +374,7 @@ final class TerminalViewController: UIViewController {
         // arithmetic to land on the wrong rows (garbled backspace/redraw).
         channel.onReady = { [weak self] in
             self?.notifyTerminalSize()
+            self?.sendInitialDirectory()
         }
 
         // Force layout so terminalView.bounds is accurate before forwarding size to SSH.
@@ -290,6 +402,11 @@ final class TerminalViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             self?.onConnectionClosed?()
         }
+    }
+
+    private func sendInitialDirectory() {
+        guard let dir = defaultDirectory, !dir.isEmpty else { return }
+        sendString("cd \(dir)\n")
     }
 
     // MARK: - Status Overlay Helpers
@@ -324,6 +441,149 @@ final class TerminalViewController: UIViewController {
         guard cols != lastReportedSize.cols || rows != lastReportedSize.rows else { return }
         lastReportedSize = (cols, rows)
         sshTerminalChannel?.resize(cols: cols, rows: rows)
+    }
+
+    // MARK: - File Upload
+
+    @objc private func uploadTapped() {
+        let sheet = UIAlertController(title: "Upload File", message: "Choose a file to upload to \(uploadPath)/", preferredStyle: .actionSheet)
+
+        sheet.addAction(UIAlertAction(title: "Photos & Videos", style: .default) { [weak self] _ in
+            self?.showPhotoPicker()
+        })
+        sheet.addAction(UIAlertAction(title: "Files", style: .default) { [weak self] _ in
+            self?.showDocumentPicker()
+        })
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        if let popover = sheet.popoverPresentationController {
+            popover.sourceView = headerBar
+            popover.sourceRect = CGRect(x: 30, y: headerBar.bounds.maxY, width: 0, height: 0)
+            popover.permittedArrowDirections = .up
+        }
+        present(sheet, animated: true)
+    }
+
+    private func showPhotoPicker() {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 0
+        config.filter = .any(of: [.images, .videos])
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    private func showDocumentPicker() {
+        let types: [UTType] = [.item]
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
+        picker.delegate = self
+        picker.allowsMultipleSelection = true
+        present(picker, animated: true)
+    }
+
+    private func uploadFiles(_ urls: [URL]) {
+        guard let conn = sshConnection, !urls.isEmpty else { return }
+
+        uploadProgressView?.isHidden = false
+        uploadProgressView?.setProgress(0, animated: false)
+        uploadStatusLabel?.isHidden = false
+
+        Task {
+            do {
+                let sftp = try await conn.openSFTP()
+
+                // Ensure upload directory exists
+                try await sftp.mkdir(uploadPath)
+
+                for (i, url) in urls.enumerated() {
+                    let fileName = url.lastPathComponent
+                    let remotePath = uploadPath.hasSuffix("/")
+                        ? "\(uploadPath)\(fileName)"
+                        : "\(uploadPath)/\(fileName)"
+
+                    await MainActor.run {
+                        uploadStatusLabel?.text = "\(i + 1)/\(urls.count): \(fileName)"
+                    }
+
+                    try await sftp.upload(localURL: url, remotePath: remotePath) { [weak self] fraction in
+                        let overall = (Double(i) + fraction) / Double(urls.count)
+                        self?.uploadProgressView?.setProgress(Float(overall), animated: true)
+                    }
+                }
+
+                await sftp.close()
+
+                await MainActor.run {
+                    uploadProgressView?.setProgress(1.0, animated: true)
+                    uploadStatusLabel?.text = "\(urls.count) file\(urls.count == 1 ? "" : "s") uploaded"
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }
+
+                // Auto-hide after delay
+                try? await Task.sleep(nanoseconds: 2_500_000_000)
+                await MainActor.run {
+                    UIView.animate(withDuration: 0.3) {
+                        self.uploadProgressView?.alpha = 0
+                        self.uploadStatusLabel?.alpha = 0
+                    } completion: { _ in
+                        self.uploadProgressView?.isHidden = true
+                        self.uploadProgressView?.alpha = 1
+                        self.uploadProgressView?.setProgress(0, animated: false)
+                        self.uploadStatusLabel?.isHidden = true
+                        self.uploadStatusLabel?.alpha = 1
+                        self.uploadStatusLabel?.text = nil
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    uploadProgressView?.isHidden = true
+                    uploadStatusLabel?.isHidden = true
+                    showUploadError(error)
+                }
+            }
+
+            // Clean up temporary files from document picker (asCopy: true)
+            for url in urls {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
+    }
+
+    private func showUploadError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "Upload Failed",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+        UINotificationFeedbackGenerator().notificationOccurred(.error)
+    }
+
+    // MARK: - Tmux Panel
+
+    private func showTmuxPanel() {
+        if tmuxPanel == nil {
+            let panel = TmuxPanelInputView()
+            panel.onKeyPressed = { [weak self] sequence in
+                self?.sendString(sequence)
+            }
+            panel.applicationCursorKeys = { [weak self] in
+                self?.terminalView.getTerminal().applicationCursor ?? false
+            }
+            panel.onClose = { [weak self] in
+                self?.hideTmuxPanel()
+            }
+            tmuxPanel = panel
+        }
+        // Swap inputView: keyboard disappears, tmux panel fills that space.
+        keyboardProxy.setInputView(tmuxPanel)
+        keyboardProxy.reloadInputViews()
+    }
+
+    private func hideTmuxPanel() {
+        keyboardProxy.setInputView(nil)
+        keyboardProxy.reloadInputViews()
     }
 
     // MARK: - Input Helpers
@@ -361,7 +621,7 @@ extension TerminalViewController: TerminalViewDelegate {
 
     func setTerminalTitle(source: TerminalView, title: String) {
         DispatchQueue.main.async {
-            self.title = title.isEmpty ? "Terminal" : title
+            self.headerTitleLabel?.text = title.isEmpty ? self.hostTitle : title
         }
     }
 
@@ -511,3 +771,67 @@ extension TerminalViewController {
     }
 }
 #endif
+
+// MARK: - PHPickerViewControllerDelegate
+
+extension TerminalViewController: PHPickerViewControllerDelegate {
+
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        dismiss(animated: true)
+        guard !results.isEmpty else { return }
+
+        Task {
+            var urls: [URL] = []
+            for result in results {
+                let provider = result.itemProvider
+
+                // Try loading as a file representation (works for photos and videos)
+                if let url = await loadFileRepresentation(from: provider) {
+                    urls.append(url)
+                }
+            }
+            if !urls.isEmpty {
+                uploadFiles(urls)
+            }
+        }
+    }
+
+    /// Load a PHPickerResult's item as a temporary file URL.
+    private func loadFileRepresentation(from provider: NSItemProvider) async -> URL? {
+        // Prefer movie, then image
+        let types: [UTType] = [.movie, .image]
+        for type in types {
+            if provider.hasItemConformingToTypeIdentifier(type.identifier) {
+                return await withCheckedContinuation { cont in
+                    provider.loadFileRepresentation(forTypeIdentifier: type.identifier) { url, _ in
+                        guard let url else {
+                            cont.resume(returning: nil)
+                            return
+                        }
+                        // Copy to a temporary location (the provided URL is deleted after this callback)
+                        let tmp = FileManager.default.temporaryDirectory
+                            .appendingPathComponent(UUID().uuidString)
+                            .appendingPathExtension(url.pathExtension)
+                        do {
+                            try FileManager.default.copyItem(at: url, to: tmp)
+                            cont.resume(returning: tmp)
+                        } catch {
+                            cont.resume(returning: nil)
+                        }
+                    }
+                }
+            }
+        }
+        return nil
+    }
+}
+
+// MARK: - UIDocumentPickerDelegate
+
+extension TerminalViewController: UIDocumentPickerDelegate {
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard !urls.isEmpty else { return }
+        uploadFiles(urls)
+    }
+}

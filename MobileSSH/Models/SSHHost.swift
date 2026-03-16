@@ -56,6 +56,13 @@ final class SSHHost {
     var createdAt: Date
     var notes: String
 
+    /// Remote directory for file uploads (relative to home, or absolute path).
+    /// Optional so SwiftData can auto-migrate existing rows; defaults to "uploads".
+    var uploadPath: String?
+
+    /// Directory to cd into automatically after connecting.
+    var defaultDirectory: String?
+
     init(
         id: UUID = UUID(),
         name: String = "",
@@ -69,7 +76,9 @@ final class SSHHost {
         isFavorite: Bool = false,
         lastConnected: Date? = nil,
         createdAt: Date = Date(),
-        notes: String = ""
+        notes: String = "",
+        uploadPath: String? = "uploads",
+        defaultDirectory: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -84,6 +93,14 @@ final class SSHHost {
         self.lastConnected = lastConnected
         self.createdAt = createdAt
         self.notes = notes
+        self.uploadPath = uploadPath
+        self.defaultDirectory = defaultDirectory
+    }
+
+    /// Effective upload path, falling back to "uploads" if nil or empty.
+    var effectiveUploadPath: String {
+        let path = uploadPath ?? "uploads"
+        return path.isEmpty ? "uploads" : path
     }
 
     /// Returns the effective hostname to connect to based on connectionType

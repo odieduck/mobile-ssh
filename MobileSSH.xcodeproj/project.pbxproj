@@ -22,6 +22,7 @@
 		A77906B10ED9FC90E1222A8A /* SSHAuthMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC80DB27981E7E91B5EF5E4 /* SSHAuthMethod.swift */; };
 		BA1BA0EDD12F0DBB0CA1F4D4 /* AddHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0178EB82AE9B3E828ECABC88 /* AddHostView.swift */; };
 		BD5F3CB179190C7E5C9F0D3E /* SSHTerminalChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890ABE84CB74A42CB8DF276E /* SSHTerminalChannel.swift */; };
+		C1D2E3F4A5B6C7D8E9F0A1B2 /* SFTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E3F4A5B6C7D8E9F0A1B2C3 /* SFTPClient.swift */; };
 		DF481780FF9B4E8889460048 /* NIOSSH in Frameworks */ = {isa = PBXBuildFile; productRef = 012434A14E8321C37740B98C /* NIOSSH */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		85B897331136E695943084FB /* KeyboardToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardToolbar.swift; sourceTree = "<group>"; };
 		E2D1C0B9A8F7E6D5C4B3A2F1 /* SSHTerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHTerminalView.swift; sourceTree = "<group>"; };
 		890ABE84CB74A42CB8DF276E /* SSHTerminalChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHTerminalChannel.swift; sourceTree = "<group>"; };
+		D2E3F4A5B6C7D8E9F0A1B2C3 /* SFTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFTPClient.swift; sourceTree = "<group>"; };
 		9A5484F338275F8B5A9A4DE5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AAD35A11625CA010625950C2 /* TerminalContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalContainerView.swift; sourceTree = "<group>"; };
 		B9A2F15BC2DB8D1337FB7016 /* MobileSSH.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileSSH.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +72,7 @@
 		1B873666FA601D7FE9B0BBDE /* SSH */ = {
 			isa = PBXGroup;
 			children = (
+				D2E3F4A5B6C7D8E9F0A1B2C3 /* SFTPClient.swift */,
 				2FC80DB27981E7E91B5EF5E4 /* SSHAuthMethod.swift */,
 				7CEB27ABA31C90B9E51FBE0E /* SSHConnection.swift */,
 				890ABE84CB74A42CB8DF276E /* SSHTerminalChannel.swift */,
@@ -201,7 +204,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B2548B3843B9FE9E5F99256B /* XCRemoteSwiftPackageReference "swift-nio-ssh" */,
-				FB687CCAAE608455E7B0E03D /* XCLocalSwiftPackageReference "SwiftTerm" */,
+				FB687CCAAE608455E7B0E03D /* XCRemoteSwiftPackageReference "SwiftTerm" */,
 			);
 			projectDirPath = "";
 			projectRoot = "";
@@ -233,6 +236,7 @@
 				51B8927DB4168B05B64E5D26 /* KeychainStore.swift in Sources */,
 				9FC39EA34C667A3E46E3F447 /* MobileSSHApp.swift in Sources */,
 				A77906B10ED9FC90E1222A8A /* SSHAuthMethod.swift in Sources */,
+				C1D2E3F4A5B6C7D8E9F0A1B2 /* SFTPClient.swift in Sources */,
 				A42E45628E802333EEA01E7E /* SSHConnection.swift in Sources */,
 				986325C13B4F39971FB5ED54 /* SSHHost.swift in Sources */,
 				BD5F3CB179190C7E5C9F0D3E /* SSHTerminalChannel.swift in Sources */,
@@ -437,9 +441,13 @@
 				minimumVersion = 0.7.0;
 			};
 		};
-		FB687CCAAE608455E7B0E03D /* XCLocalSwiftPackageReference "SwiftTerm" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = LocalPackages/SwiftTerm;
+		FB687CCAAE608455E7B0E03D /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.12.0;
+			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
@@ -451,7 +459,7 @@
 		};
 		55A3CEC5B44726F54004ABC9 /* SwiftTerm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = FB687CCAAE608455E7B0E03D /* XCLocalSwiftPackageReference "SwiftTerm" */;
+			package = FB687CCAAE608455E7B0E03D /* XCRemoteSwiftPackageReference "SwiftTerm" */;
 			productName = SwiftTerm;
 		};
 /* End XCSwiftPackageProductDependency section */

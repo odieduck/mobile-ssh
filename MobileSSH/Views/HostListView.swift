@@ -108,9 +108,9 @@ struct HostListView: View {
                     activeHost = nil
                 }
             }) {
-                if let channel = activeTerminalChannel, let host = activeHost {
+                if let channel = activeTerminalChannel, let host = activeHost, let conn = activeConnection {
                     NavigationStack {
-                        TerminalPresentationView(host: host, sshTerminalChannel: channel)
+                        TerminalPresentationView(host: host, sshTerminalChannel: channel, sshConnection: conn)
                     }
                 }
             }

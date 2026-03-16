@@ -198,6 +198,10 @@ final class TerminalKeyboardProxy: UIView, UIKeyInput {
     override var inputAccessoryView: UIView? { _inputAccessoryView }
     func setInputAccessoryView(_ view: UIView?) { _inputAccessoryView = view }
 
+    private var _inputView: UIView?
+    override var inputView: UIView? { _inputView }
+    func setInputView(_ view: UIView?) { _inputView = view }
+
     // MARK: - UITextInputTraits (keeps keyboard settings consistent with TerminalView)
 
     var keyboardType: UIKeyboardType {
