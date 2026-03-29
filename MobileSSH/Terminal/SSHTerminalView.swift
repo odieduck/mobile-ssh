@@ -18,6 +18,15 @@ import UIKit
 ///    `firstRow = Int(dirtyRect.minY / cellHeight)` indexes the actual visible rows.
 final class SSHTerminalView: TerminalView {
 
+    // MARK: - Prevent TerminalView from stealing first responder
+    //
+    // SwiftTerm's TerminalView becomes first responder on tap/long-press, which
+    // shows its built-in TerminalAccessory keyboard alongside our custom
+    // KeyboardToolbar. By blocking first-responder here, we keep focus on
+    // TerminalKeyboardProxy so only our toolbar appears.
+
+    override var canBecomeFirstResponder: Bool { false }
+
     // MARK: - Buffer switch fix
 
     override func bufferActivated(source: Terminal) {

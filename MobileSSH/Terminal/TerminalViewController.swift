@@ -197,7 +197,9 @@ final class TerminalViewController: UIViewController {
         keyboardProxy.frame = .zero
         keyboardProxy.isHidden = true
         keyboardProxy.onText = { [weak self] text in
-            self?.sendString(text)
+            guard let self else { return }
+            let modified = self.keyboardToolbar.applyModifier(to: text)
+            self.sendString(modified)
         }
         keyboardProxy.onBackspace = { [weak self] in
             self?.sendString("\u{7f}")
@@ -240,12 +242,23 @@ final class TerminalViewController: UIViewController {
             terminalView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
         ])
 
+        // Tap the terminal to (re)focus the keyboard proxy, since we block
+        // TerminalView's own becomeFirstResponder to avoid its built-in accessory.
+        let focusTap = UITapGestureRecognizer(target: self, action: #selector(terminalTapped))
+        terminalView.addGestureRecognizer(focusTap)
+
         setupScrollToBottomButton()
         observeScrollPosition()
 
         #if DEBUG
         setupDebugGesture()
         #endif
+    }
+
+    @objc private func terminalTapped() {
+        if !keyboardProxy.isFirstResponder {
+            keyboardProxy.becomeFirstResponder()
+        }
     }
 
     // MARK: - Scroll-to-Bottom Button

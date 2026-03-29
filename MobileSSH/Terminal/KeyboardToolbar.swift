@@ -393,6 +393,30 @@ final class KeyboardToolbar: UIInputView {
         stack.addArrangedSubview(v)
     }
 
+    // MARK: - Modifier state for software keyboard
+
+    /// Consumes the active modifier (Ctrl or Alt) and returns the transformed
+    /// sequence.  If no modifier is active the input is returned unchanged.
+    /// This allows the software keyboard path (TerminalKeyboardProxy) to
+    /// participate in the toolbar's Ctrl / Alt toggle.
+    func applyModifier(to text: String) -> String {
+        if ctrlActive {
+            let out = ctrlSeq(text)
+            ctrlActive = false
+            refreshCtrl()
+            return out
+        }
+        if altActive {
+            altActive = false
+            refreshAlt()
+            return "\u{1B}" + text
+        }
+        return text
+    }
+
+    /// True when Ctrl or Alt is currently toggled on.
+    var hasActiveModifier: Bool { ctrlActive || altActive }
+
     // MARK: - Actions
 
     @objc private func tmuxTapped() {
