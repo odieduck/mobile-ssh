@@ -12,6 +12,7 @@ final class TerminalViewController: UIViewController {
     var sshConnection: SSHConnection?
     var uploadPath: String = "uploads"
     var defaultDirectory: String?
+    var loginCommands: String?
     var onConnectionClosed: (() -> Void)?
     /// Called immediately when the user taps Disconnect (before channel close completes).
     var onDisconnect: (() -> Void)?
@@ -388,6 +389,7 @@ final class TerminalViewController: UIViewController {
         channel.onReady = { [weak self] in
             self?.notifyTerminalSize()
             self?.sendInitialDirectory()
+            self?.sendLoginCommands()
         }
 
         // Force layout so terminalView.bounds is accurate before forwarding size to SSH.
@@ -420,6 +422,19 @@ final class TerminalViewController: UIViewController {
     private func sendInitialDirectory() {
         guard let dir = defaultDirectory, !dir.isEmpty else { return }
         sendString("cd \(dir)\n")
+    }
+
+    private func sendLoginCommands() {
+        guard let commands = loginCommands, !commands.isEmpty else { return }
+        // Small delay so the shell prompt is ready after cd
+        let delay: TimeInterval = (defaultDirectory ?? "").isEmpty ? 0.3 : 0.8
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            for line in commands.components(separatedBy: .newlines) {
+                let trimmed = line.trimmingCharacters(in: .whitespaces)
+                guard !trimmed.isEmpty else { continue }
+                self?.sendString(trimmed + "\n")
+            }
+        }
     }
 
     // MARK: - Status Overlay Helpers

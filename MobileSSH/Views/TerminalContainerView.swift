@@ -7,6 +7,7 @@ struct TerminalContainerView: UIViewControllerRepresentable {
     let sshConnection: SSHConnection
     let uploadPath: String
     let defaultDirectory: String?
+    let loginCommands: String?
     var onConnectionClosed: (() -> Void)?
 
     func makeUIViewController(context: Context) -> TerminalViewController {
@@ -18,6 +19,7 @@ struct TerminalContainerView: UIViewControllerRepresentable {
         uiViewController.sshConnection = sshConnection
         uiViewController.uploadPath = uploadPath
         uiViewController.defaultDirectory = defaultDirectory
+        uiViewController.loginCommands = loginCommands
         if uiViewController.sshTerminalChannel == nil {
             uiViewController.onConnectionClosed = onConnectionClosed
             uiViewController.onDisconnect = onConnectionClosed
@@ -60,6 +62,7 @@ struct TerminalPresentationView: View {
             sshConnection: sshConnection,
             uploadPath: host.effectiveUploadPath,
             defaultDirectory: host.defaultDirectory,
+            loginCommands: host.loginCommands,
             onConnectionClosed: { dismiss() }
         )
         .toolbar(.hidden, for: .navigationBar)

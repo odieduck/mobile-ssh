@@ -24,6 +24,7 @@ struct AddHostView: View {
     @State private var isFavorite: Bool = false
     @State private var uploadPath: String = "uploads"
     @State private var defaultDirectory: String = ""
+    @State private var loginCommands: String = ""
 
     // UI state
     @State private var showingTestResult = false
@@ -207,6 +208,23 @@ struct AddHostView: View {
                         .foregroundColor(.secondary)
 
                     VStack(alignment: .leading, spacing: 4) {
+                        Text("Login Commands")
+                            .font(.subheadline)
+                        TextEditor(text: $loginCommands)
+                            .font(.system(size: 13, design: .monospaced))
+                            .frame(minHeight: 60)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                            )
+                    }
+                    Text("Commands to run automatically after login (one per line). Runs after Default Directory cd.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("Notes")
                             .font(.subheadline)
                         TextEditor(text: $notes)
@@ -277,6 +295,7 @@ struct AddHostView: View {
         isFavorite = host.isFavorite
         uploadPath = host.effectiveUploadPath
         defaultDirectory = host.defaultDirectory ?? ""
+        loginCommands = host.loginCommands ?? ""
 
         // Load from Keychain
         if authType == .password {
@@ -309,6 +328,7 @@ struct AddHostView: View {
         host.isFavorite = isFavorite
         host.uploadPath = uploadPath.isEmpty ? nil : uploadPath
         host.defaultDirectory = defaultDirectory.isEmpty ? nil : defaultDirectory
+        host.loginCommands = loginCommands.isEmpty ? nil : loginCommands
 
         // Save credentials to Keychain
         do {

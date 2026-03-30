@@ -63,6 +63,9 @@ final class SSHHost {
     /// Directory to cd into automatically after connecting.
     var defaultDirectory: String?
 
+    /// Commands to run automatically after login (one per line).
+    var loginCommands: String?
+
     init(
         id: UUID = UUID(),
         name: String = "",
@@ -78,7 +81,8 @@ final class SSHHost {
         createdAt: Date = Date(),
         notes: String = "",
         uploadPath: String? = "uploads",
-        defaultDirectory: String? = nil
+        defaultDirectory: String? = nil,
+        loginCommands: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -95,6 +99,7 @@ final class SSHHost {
         self.notes = notes
         self.uploadPath = uploadPath
         self.defaultDirectory = defaultDirectory
+        self.loginCommands = loginCommands
     }
 
     /// Effective upload path, falling back to "uploads" if nil or empty.

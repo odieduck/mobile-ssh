@@ -130,6 +130,7 @@ final class SSHConnection: ObservableObject {
         let serverAuthDelegate = SSHServerAuthDelegate()
 
         let bootstrap = ClientBootstrap(group: group)
+            .channelOption(ChannelOptions.socket(SOL_SOCKET, SO_KEEPALIVE), value: 1)
             .channelInitializer { channel in
                 let sshHandler = NIOSSHHandler(
                     role: .client(.init(
