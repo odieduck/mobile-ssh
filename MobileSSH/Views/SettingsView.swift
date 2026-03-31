@@ -35,7 +35,11 @@ struct SettingsView: View {
                     Picker("Theme", selection: $terminalTheme) {
                         Text("Dark").tag("dark")
                         Text("Solarized Dark").tag("solarized")
-                        Text("Default").tag("default")
+                        Text("Dracula").tag("dracula")
+                        Text("Nord").tag("nord")
+                        Text("Monokai").tag("monokai")
+                        Text("One Dark").tag("onedark")
+                        Text("Gruvbox Dark").tag("gruvbox")
                     }
 
                     LabeledContent("Default Username") {

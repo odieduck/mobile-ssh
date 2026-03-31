@@ -34,6 +34,7 @@ final class TerminalViewController: UIViewController {
     private var scrollToBottomButton: UIButton!
     private var scrollObserver: AnyCancellable?
     private var editMenuInteraction: UIEditMenuInteraction?
+    private var settingsObserver: AnyCancellable?
 
     /// Last size successfully sent to the SSH server.  Used to suppress duplicate
     /// resize requests that fire from viewDidLayoutSubviews / sizeChanged / onReady.
@@ -233,6 +234,13 @@ final class TerminalViewController: UIViewController {
         // and survives normal resizes (Buffer.resize preserves buffer.scrollback).
         terminalView.getTerminal().changeHistorySize(2000)
 
+        applySettings()
+
+        // Re-apply settings whenever the user changes them from the Settings sheet.
+        settingsObserver = NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in self?.applySettings() }
+
         view.addSubview(terminalView)
         view.addSubview(keyboardProxy)
 
@@ -264,6 +272,94 @@ final class TerminalViewController: UIViewController {
         #if DEBUG
         setupDebugGesture()
         #endif
+    }
+
+    // MARK: - Settings Application
+
+    private func applySettings() {
+        let rawSize = UserDefaults.standard.double(forKey: "terminalFontSize")
+        let size = rawSize > 0 ? CGFloat(rawSize) : 13
+        terminalView.font = UIFont.monospacedSystemFont(ofSize: size, weight: .regular)
+
+        let theme = UserDefaults.standard.string(forKey: "terminalTheme") ?? "dark"
+        applyTheme(theme)
+    }
+
+    private func applyTheme(_ theme: String) {
+        // Helper to create a SwiftTerm Color from 8-bit RGB components.
+        func c(_ r: UInt8, _ g: UInt8, _ b: UInt8) -> Color {
+            Color(red: UInt16(r) * 257, green: UInt16(g) * 257, blue: UInt16(b) * 257)
+        }
+
+        switch theme {
+        case "solarized":
+            terminalView.nativeBackgroundColor = UIColor(red: 0/255, green: 43/255, blue: 54/255, alpha: 1)
+            terminalView.nativeForegroundColor = UIColor(red: 131/255, green: 148/255, blue: 150/255, alpha: 1)
+            terminalView.installColors([
+                c(0x07, 0x36, 0x42), c(0xDC, 0x32, 0x2F), c(0x85, 0x99, 0x00), c(0xB5, 0x89, 0x00),
+                c(0x26, 0x8B, 0xD2), c(0xD3, 0x36, 0x82), c(0x2A, 0xA1, 0x98), c(0xEE, 0xE8, 0xD5),
+                c(0x00, 0x2B, 0x36), c(0xCB, 0x4B, 0x16), c(0x58, 0x6E, 0x75), c(0x65, 0x7B, 0x83),
+                c(0x83, 0x94, 0x96), c(0x6C, 0x71, 0xC4), c(0x93, 0xA1, 0xA1), c(0xFD, 0xF6, 0xE3),
+            ])
+        case "dracula":
+            terminalView.nativeBackgroundColor = UIColor(red: 40/255, green: 42/255, blue: 54/255, alpha: 1)
+            terminalView.nativeForegroundColor = UIColor(red: 248/255, green: 248/255, blue: 242/255, alpha: 1)
+            terminalView.installColors([
+                c(0x21, 0x22, 0x2C), c(0xFF, 0x55, 0x55), c(0x50, 0xFA, 0x7B), c(0xF1, 0xFA, 0x8C),
+                c(0xBD, 0x93, 0xF9), c(0xFF, 0x79, 0xC6), c(0x8B, 0xE9, 0xFD), c(0xF8, 0xF8, 0xF2),
+                c(0x62, 0x72, 0xA4), c(0xFF, 0x6E, 0x6E), c(0x69, 0xFF, 0x94), c(0xFF, 0xFF, 0xA5),
+                c(0xD6, 0xAC, 0xFF), c(0xFF, 0x92, 0xDF), c(0xA4, 0xFF, 0xFF), c(0xFF, 0xFF, 0xFF),
+            ])
+        case "nord":
+            terminalView.nativeBackgroundColor = UIColor(red: 46/255, green: 52/255, blue: 64/255, alpha: 1)
+            terminalView.nativeForegroundColor = UIColor(red: 216/255, green: 222/255, blue: 233/255, alpha: 1)
+            terminalView.installColors([
+                c(0x3B, 0x42, 0x52), c(0xBF, 0x61, 0x6A), c(0xA3, 0xBE, 0x8C), c(0xEB, 0xCB, 0x8B),
+                c(0x81, 0xA1, 0xC1), c(0xB4, 0x8E, 0xAD), c(0x88, 0xC0, 0xD0), c(0xE5, 0xE9, 0xF0),
+                c(0x4C, 0x56, 0x6A), c(0xBF, 0x61, 0x6A), c(0xA3, 0xBE, 0x8C), c(0xEB, 0xCB, 0x8B),
+                c(0x81, 0xA1, 0xC1), c(0xB4, 0x8E, 0xAD), c(0x8F, 0xBC, 0xBB), c(0xEC, 0xEF, 0xF4),
+            ])
+        case "monokai":
+            terminalView.nativeBackgroundColor = UIColor(red: 39/255, green: 40/255, blue: 34/255, alpha: 1)
+            terminalView.nativeForegroundColor = UIColor(red: 248/255, green: 248/255, blue: 242/255, alpha: 1)
+            terminalView.installColors([
+                c(0x27, 0x28, 0x22), c(0xF9, 0x26, 0x72), c(0xA6, 0xE2, 0x2E), c(0xF4, 0xBF, 0x75),
+                c(0x66, 0xD9, 0xE8), c(0xAE, 0x81, 0xFF), c(0xA1, 0xEF, 0xE4), c(0xF8, 0xF8, 0xF2),
+                c(0x75, 0x71, 0x5E), c(0xF9, 0x26, 0x72), c(0xA6, 0xE2, 0x2E), c(0xF4, 0xBF, 0x75),
+                c(0x66, 0xD9, 0xE8), c(0xAE, 0x81, 0xFF), c(0xA1, 0xEF, 0xE4), c(0xF9, 0xF8, 0xF5),
+            ])
+        case "onedark":
+            terminalView.nativeBackgroundColor = UIColor(red: 40/255, green: 44/255, blue: 52/255, alpha: 1)
+            terminalView.nativeForegroundColor = UIColor(red: 171/255, green: 178/255, blue: 191/255, alpha: 1)
+            terminalView.installColors([
+                c(0x28, 0x2C, 0x34), c(0xE0, 0x6C, 0x75), c(0x98, 0xC3, 0x79), c(0xE5, 0xC0, 0x7B),
+                c(0x61, 0xAF, 0xEF), c(0xC6, 0x78, 0xDD), c(0x56, 0xB6, 0xC2), c(0xAB, 0xB2, 0xBF),
+                c(0x5C, 0x63, 0x70), c(0xE0, 0x6C, 0x75), c(0x98, 0xC3, 0x79), c(0xE5, 0xC0, 0x7B),
+                c(0x61, 0xAF, 0xEF), c(0xC6, 0x78, 0xDD), c(0x56, 0xB6, 0xC2), c(0xFF, 0xFF, 0xFF),
+            ])
+        case "gruvbox":
+            terminalView.nativeBackgroundColor = UIColor(red: 40/255, green: 40/255, blue: 40/255, alpha: 1)
+            terminalView.nativeForegroundColor = UIColor(red: 235/255, green: 219/255, blue: 178/255, alpha: 1)
+            terminalView.installColors([
+                c(0x28, 0x28, 0x28), c(0xCC, 0x24, 0x1D), c(0x98, 0x97, 0x1A), c(0xD7, 0x99, 0x21),
+                c(0x45, 0x85, 0x88), c(0xB1, 0x62, 0x86), c(0x68, 0x9D, 0x6A), c(0xA8, 0x99, 0x84),
+                c(0x92, 0x83, 0x74), c(0xFB, 0x49, 0x34), c(0xB8, 0xBB, 0x26), c(0xFA, 0xBD, 0x2F),
+                c(0x83, 0xA5, 0x98), c(0xD3, 0x86, 0x9B), c(0x8E, 0xC0, 0x7C), c(0xEB, 0xDB, 0xB2),
+            ])
+        default: // "dark" and any unknown theme
+            terminalView.nativeBackgroundColor = .black
+            terminalView.nativeForegroundColor = UIColor(red: 0.937, green: 0.937, blue: 0.937, alpha: 1)
+            terminalView.installColors([
+                c(0x00, 0x00, 0x00), c(0xCC, 0x00, 0x00), c(0x4E, 0x9A, 0x06), c(0xC4, 0xA0, 0x00),
+                c(0x34, 0x65, 0xA4), c(0x75, 0x50, 0x7B), c(0x06, 0x98, 0x9A), c(0xD3, 0xD7, 0xCF),
+                c(0x55, 0x57, 0x53), c(0xEF, 0x29, 0x29), c(0x8A, 0xE2, 0x34), c(0xFC, 0xE9, 0x4F),
+                c(0x72, 0x9F, 0xCF), c(0xAD, 0x7F, 0xA8), c(0x34, 0xE2, 0xE2), c(0xEE, 0xEE, 0xEC),
+            ])
+        }
+
+        // Keep backgroundColor in sync for areas not covered by terminal cells.
+        terminalView.backgroundColor = terminalView.nativeBackgroundColor
+        view.backgroundColor = terminalView.nativeBackgroundColor
     }
 
     @objc private func terminalTapped() {
