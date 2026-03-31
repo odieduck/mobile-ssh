@@ -33,6 +33,7 @@ final class TerminalViewController: UIViewController {
     private var statusOverlay: UIView!
     private var scrollToBottomButton: UIButton!
     private var scrollObserver: AnyCancellable?
+    private var editMenuInteraction: UIEditMenuInteraction?
 
     /// Last size successfully sent to the SSH server.  Used to suppress duplicate
     /// resize requests that fire from viewDidLayoutSubviews / sizeChanged / onReady.
@@ -248,6 +249,15 @@ final class TerminalViewController: UIViewController {
         let focusTap = UITapGestureRecognizer(target: self, action: #selector(terminalTapped))
         terminalView.addGestureRecognizer(focusTap)
 
+        // Long-press shows a Paste (and Copy) context menu.
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(terminalLongPressed(_:)))
+        longPress.minimumPressDuration = 0.5
+        terminalView.addGestureRecognizer(longPress)
+
+        let editInteraction = UIEditMenuInteraction(delegate: self)
+        terminalView.addInteraction(editInteraction)
+        editMenuInteraction = editInteraction
+
         setupScrollToBottomButton()
         observeScrollPosition()
 
@@ -260,6 +270,13 @@ final class TerminalViewController: UIViewController {
         if !keyboardProxy.isFirstResponder {
             keyboardProxy.becomeFirstResponder()
         }
+    }
+
+    @objc private func terminalLongPressed(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        let location = gesture.location(in: terminalView)
+        let config = UIEditMenuConfiguration(identifier: nil, sourcePoint: location)
+        editMenuInteraction?.presentEditMenu(with: config)
     }
 
     // MARK: - Scroll-to-Bottom Button
@@ -677,6 +694,36 @@ extension TerminalViewController: TerminalViewDelegate {
     func iTermContent(source: TerminalView, content: ArraySlice<UInt8>) {}
 
     func rangeChanged(source: TerminalView, startY: Int, endY: Int) {}
+}
+
+// MARK: - UIEditMenuInteractionDelegate
+
+extension TerminalViewController: UIEditMenuInteractionDelegate {
+
+    func editMenuInteraction(
+        _ interaction: UIEditMenuInteraction,
+        menuFor configuration: UIEditMenuConfiguration,
+        suggestedActions: [UIMenuElement]
+    ) -> UIMenu? {
+        var actions: [UIAction] = []
+
+        // Paste: send clipboard text to SSH
+        if let text = UIPasteboard.general.string, !text.isEmpty {
+            actions.append(UIAction(title: "Paste", image: UIImage(systemName: "doc.on.clipboard")) { [weak self] _ in
+                self?.sendString(text)
+                self?.keyboardProxy.becomeFirstResponder()
+            })
+        }
+
+        // Copy: copy whatever SwiftTerm has selected (e.g. from a prior drag-select)
+        if let selected = terminalView.getSelection(), !selected.isEmpty {
+            actions.append(UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
+                UIPasteboard.general.string = selected
+            })
+        }
+
+        return actions.isEmpty ? nil : UIMenu(children: actions)
+    }
 }
 
 // MARK: - Debug Testing (DEBUG builds only)

@@ -198,6 +198,22 @@ final class TerminalKeyboardProxy: UIView, UIKeyInput {
         }
     }
 
+    // MARK: - Paste action (Cmd+V on physical keyboard, or UIEditMenuInteraction)
+
+    /// Called for Cmd+V on a hardware keyboard; also invoked programmatically by
+    /// the long-press paste menu in TerminalViewController.
+    override func paste(_ sender: Any?) {
+        guard let text = UIPasteboard.general.string, !text.isEmpty else { return }
+        onText?(text)
+    }
+
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if action == #selector(paste(_:)) {
+            return UIPasteboard.general.hasStrings
+        }
+        return super.canPerformAction(action, withSender: sender)
+    }
+
     // MARK: - UIResponder
 
     override var canBecomeFirstResponder: Bool { true }
